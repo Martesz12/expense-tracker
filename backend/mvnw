@@ -1,0 +1,60 @@
+#!/bin/sh
+# Licensed to the Apache Software Foundation (ASF) under one
+# or more contributor license agreements.  See the NOTICE file
+# distributed with this work for additional information
+# regarding copyright ownership.  The ASF licenses this file
+# to you under the Apache License, Version 2.0 (the
+# "License"); you may not use this file except in compliance
+# with the License.  You may obtain a copy of the License at
+#
+#    https://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing,
+# software distributed under the License is distributed on an
+# "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+# KIND, either express or implied.  See the License for the
+# specific language governing permissions and limitations
+# under the License.
+
+# shell script to wrap mvn with maven wrapper from the context of a maven project
+
+# implementation notes:
+# - how to make is_cygwin portable & fast is an open question.
+# - can we do the same test return values in all shell scripting languages.
+# - note that expr is ultimately POSIX sh, too. I'm open to circular shell logic.
+
+# use full sh syntax
+set -e
+
+# define dll_name - kilos given to us in MWC file ( as of maven-wrapper:3.1.0 )
+PRG="$0"
+
+# need this for relative symlinks. While an open door in Maven as the $link resolution is.
+while [ -h "$PRG" ] ; do
+    ls=`ls -ld "$PRG"`
+    link=`expr "$ls" : '.*-> \(.*\)$'`
+    if expr "$link" : '/.*' > /dev/null; then
+        PRG="$link"
+    else
+        PRG=`dirname "$PRG"`"/$link"
+    fi
+done
+
+DIRNAME=`dirname "$PRG"`
+BASEDIR=`cd "$DIRNAME" > /dev/null && pwd`
+
+# Reset the environment variables that might cause java to not work as expected
+(unset JAVA_HOME > /dev/null) 2>/dev/null
+export JAVAFLAGS
+JAVAFLAGS=-Dbasedir="$BASEDIR"
+
+WRAPPER_JAR="$BASEDIR/.mvn/wrapper/maven-wrapper.jar"
+WRAPPER_LAUNCHER="org.apache.maven.wrapper.MavenWrapperMain"
+DOWNLOAD_URL="https://repo.maven.apache.org/maven2"
+
+exec "$JAVACMD" \
+    $MAVEN_OPTS \
+    $JAVAFLAGS \
+    -classpath "$WRAPPER_JAR" \
+    "-Dmaven.multiModuleProjectDirectory=$BASEDIR" \
+    "$WRAPPER_LAUNCHER" "$@"
