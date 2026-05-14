@@ -1,13 +1,12 @@
 # ---- Build stage ----
-FROM eclipse-temurin:21-jdk-alpine AS build
+FROM maven:3.9-eclipse-temurin-21-alpine AS build
 WORKDIR /workspace
 
 COPY pom.xml .
-COPY src ./src
-COPY .mvn ./.mvn
-COPY mvnw .
+RUN mvn dependency:go-offline -q
 
-RUN chmod +x ./mvnw && ./mvnw package -DskipTests
+COPY src ./src
+RUN mvn package -DskipTests -q
 
 # ---- Runtime stage ----
 FROM eclipse-temurin:21-jre-alpine
