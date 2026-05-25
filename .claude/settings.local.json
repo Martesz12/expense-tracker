@@ -1,7 +1,9 @@
 {
   "permissions": {
     "allow": [
-      "Skill(update-config)"
+      "Skill(update-config)",
+      "mcp__playwright__browser_take_screenshot",
+      "Bash(docker compose *)"
     ]
   }
 }

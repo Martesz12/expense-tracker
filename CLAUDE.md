@@ -41,8 +41,8 @@ ng generate component features/foo/bar       # Scaffold a component
 ## Local Dev Stack
 
 ```bash
-docker-compose up -d postgres    # Start only the database
-docker-compose up                # Start full stack (postgres + backend + frontend)
+docker compose up -d postgres    # Start only the database
+docker compose up                # Start full stack (postgres + backend + frontend)
 ```
 
 Backend env vars needed for local dev (see `SPEC.md §10` for full list):
