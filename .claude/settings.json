@@ -18,6 +18,12 @@
           {
             "type": "command",
             "command": "echo \"$CLAUDE_TOOL_INPUT_FILE_PATH\" | grep -qE 'frontend/.*\\.ts$' && cd frontend && npx tsc --noEmit --skipLibCheck 2>&1 | head -20 || true"
+          },
+          {
+            "type": "command",
+            "command": "(echo \"$CLAUDE_TOOL_INPUT_FILE_PATH\" | grep -qE 'frontend/.*\\.(ts|html)$' && cd frontend && npx ng lint --lint-file-patterns=\"$CLAUDE_TOOL_INPUT_FILE_PATH\" 2>&1 | head -30) || true",
+            "timeout": 30,
+            "statusMessage": "Linting..."
           }
         ]
       }
@@ -34,7 +40,7 @@
       }
     ]
   },
-    "enabledPlugins": {
+  "enabledPlugins": {
     "frontend-design@claude-plugins-official": true,
     "context7@claude-plugins-official": true,
     "playwright@claude-plugins-official": true,
