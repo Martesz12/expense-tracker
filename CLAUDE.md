@@ -32,8 +32,8 @@ mvn flyway:migrate                           # Run pending DB migrations manuall
 ```bash
 # From frontend/
 ng serve                                     # Start dev server (port 4200)
-ng test                                      # Run unit tests (Karma)
-ng test --include='**/foo.spec.ts'           # Run a single spec file
+ng test                                      # Run unit tests (Vitest)
+ng test --testPathPattern=foo.spec           # Run a single spec file
 ng build                                     # Production build
 ng generate component features/foo/bar       # Scaffold a component
 ```
@@ -81,6 +81,8 @@ Feature packages mirror the domain: `auth`, `user`, `account`, `transaction`, `c
 - Transfers are two sides of the same logical operation and must be committed atomically (`@Transactional`).
 
 ### Frontend Architecture
+
+> **Note:** NgRx runtime packages (`@ngrx/store`, `@ngrx/effects`, `@ngrx/store-devtools`) are not yet installed. Run `npm install @ngrx/store @ngrx/effects @ngrx/store-devtools` inside `frontend/` before scaffolding any feature slices.
 
 - **NgRx slices:** `auth`, `accounts`, `transactions`, `categories`, `budgets`. Effects own all HTTP calls; components only dispatch actions and select from the store.
 - **Lazy-loaded feature modules** under `app/features/`. Core services and models live in `app/core/`.
