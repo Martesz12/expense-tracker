@@ -1,6 +1,7 @@
 .idea/
 .playwright-mcp/
 .claude/settings.local.json
+.superpowers/
 
 # Java / Maven
 backend/target/
