@@ -1,0 +1,149 @@
+@use 'variables' as *;
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+.app-shell {
+  display: flex;
+  height: 100vh;
+  overflow: hidden;
+  background: $color-bg-page;
+}
+
+.sidebar {
+  width: 56px;
+  flex-shrink: 0;
+  background: $color-bg-sidebar;
+  border-right: 1px solid $color-border;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 10px 8px;
+  gap: $space-xs;
+  overflow: hidden;
+  transition: width 0.2s ease;
+  z-index: 10;
+
+  &:hover {
+    width: 200px;
+    align-items: flex-start;
+  }
+}
+
+.sidebar-logo {
+  width: 32px;
+  height: 32px;
+  border-radius: $radius-md;
+  background: $color-primary;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 14px;
+  font-weight: 700;
+  flex-shrink: 0;
+  margin-bottom: $space-sm;
+}
+
+.sidebar-nav {
+  display: flex;
+  flex-direction: column;
+  gap: $space-xs;
+  width: 100%;
+  flex: 1;
+}
+
+.sidebar-nav-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  height: 32px;
+  border-radius: 7px;
+  padding: 0 6px;
+  cursor: pointer;
+  text-decoration: none;
+  overflow: hidden;
+  white-space: nowrap;
+  transition: background 0.15s ease;
+  width: 36px;
+
+  .sidebar:hover & {
+    width: 184px;
+  }
+
+  &.active {
+    background: $color-primary-subtle;
+
+    .nav-icon {
+      opacity: 1;
+    }
+
+    .nav-label {
+      color: $color-primary;
+      font-weight: 600;
+    }
+  }
+
+  &:not(.active):hover {
+    background: $color-bg-muted;
+  }
+}
+
+.nav-icon {
+  font-size: 16px;
+  width: 20px;
+  text-align: center;
+  flex-shrink: 0;
+  opacity: 0.4;
+
+  .active & {
+    opacity: 1;
+  }
+}
+
+.nav-label {
+  font-size: 13px;
+  font-weight: 500;
+  color: $color-text-secondary;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+
+  .sidebar:hover & {
+    opacity: 1;
+  }
+}
+
+.sidebar-footer {
+  margin-top: auto;
+  padding-top: $space-sm;
+}
+
+.user-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: $radius-pill;
+  background: $color-bg-muted;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 600;
+  color: $color-text-secondary;
+  flex-shrink: 0;
+}
+
+.content-area {
+  flex: 1;
+  overflow-y: auto;
+  padding: $space-xl;
+}

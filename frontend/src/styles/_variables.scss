@@ -1,0 +1,59 @@
+// Primary — Teal
+$color-primary: #0d9488;
+$color-primary-hover: #0f766e;
+$color-primary-light: #14b8a6;
+$color-primary-subtle: #ccfbf1;
+$color-primary-faint: #f0fdfa;
+
+// Surfaces & Backgrounds
+$color-bg-page: #f8fafc;
+$color-bg-card: #ffffff;
+$color-bg-sidebar: #ffffff;
+$color-border: #e2e8f0;
+$color-border-strong: #cbd5e1;
+$color-bg-muted: #f1f5f9;
+
+// Text
+$color-text-primary: #111827;
+$color-text-body: #374151;
+$color-text-secondary: #6b7280;
+$color-text-muted: #9ca3af;
+
+// Financial Semantic Colors
+$color-income: #16a34a;
+$color-income-light: #4ade80;
+$color-income-faint: #bbf7d0;
+
+$color-expense: #dc2626;
+$color-expense-light: #f87171;
+$color-expense-faint: #fee2e2;
+
+$color-transfer: #2563eb;
+$color-transfer-light: #93c5fd;
+$color-transfer-faint: #dbeafe;
+
+$color-budget-warn: #d97706;
+$color-budget-warn-light: #fbbf24;
+$color-budget-warn-faint: #fef3c7;
+
+// Spacing (4px base unit)
+$space-xs: 4px;
+$space-sm: 8px;
+$space-md: 12px;
+$space-lg: 16px;
+$space-xl: 24px;
+$space-2xl: 32px;
+$space-3xl: 48px;
+
+// Border Radius
+$radius-sm: 4px;
+$radius-md: 8px;
+$radius-lg: 12px;
+$radius-xl: 16px;
+$radius-pill: 9999px;
+
+// Shadows
+$shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.06);
+$shadow-sm: 0 1px 4px rgba(0, 0, 0, 0.08);
+$shadow-md: 0 4px 12px rgba(0, 0, 0, 0.1);
+$shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.12);
