@@ -10,6 +10,6 @@ import { Button } from 'primeng/button';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [RouterLink, InputText, Password, Button],
   templateUrl: './register.component.html',
-  styleUrl: './register.component.scss',
+  styleUrl: '../auth.scss',
 })
 export class RegisterComponent {}
