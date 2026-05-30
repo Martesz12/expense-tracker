@@ -27,7 +27,7 @@ body {
   border-right: 1px solid $color-border;
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: flex-start;
   padding: 10px 8px;
   gap: $space-xs;
   overflow: hidden;
@@ -36,7 +36,6 @@ body {
 
   &:hover {
     width: 200px;
-    align-items: flex-start;
   }
 }
 
@@ -53,6 +52,7 @@ body {
   font-weight: 700;
   flex-shrink: 0;
   margin-bottom: $space-sm;
+  margin-left: 2px;
 }
 
 .sidebar-nav {
@@ -140,6 +140,7 @@ body {
   font-weight: 600;
   color: $color-text-secondary;
   flex-shrink: 0;
+  margin-left: 2px;
 }
 
 .content-area {
