@@ -1,0 +1,39 @@
+<div class="auth-card">
+  <div class="auth-header">
+    <div class="auth-logo">E</div>
+    <h1 class="auth-title">Sign in</h1>
+    <p class="auth-subtitle">Welcome back to Expense Tracker</p>
+  </div>
+
+  <div class="auth-fields">
+    <div class="field">
+      <label for="login-email" class="field-label">Email</label>
+      <input
+        id="login-email"
+        type="email"
+        pInputText
+        placeholder="you@example.com"
+        autocomplete="email"
+      />
+    </div>
+
+    <div class="field">
+      <label for="login-password" class="field-label">Password</label>
+      <p-password
+        inputId="login-password"
+        placeholder="Enter your password"
+        [feedback]="false"
+        [toggleMask]="true"
+        autocomplete="current-password"
+        [fluid]="true"
+      />
+    </div>
+  </div>
+
+  <p-button label="Sign in" [fluid]="true" />
+
+  <p class="auth-footer">
+    Don't have an account?
+    <a [routerLink]="['/register']">Register</a>
+  </p>
+</div>

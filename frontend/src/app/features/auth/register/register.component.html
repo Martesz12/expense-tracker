@@ -1,0 +1,62 @@
+<div class="auth-card">
+  <div class="auth-header">
+    <div class="auth-logo">E</div>
+    <h1 class="auth-title">Create account</h1>
+    <p class="auth-subtitle">Start tracking your expenses</p>
+  </div>
+
+  <div class="auth-fields">
+    <div class="field">
+      <label for="register-name" class="field-label">Full Name</label>
+      <input
+        id="register-name"
+        type="text"
+        pInputText
+        placeholder="Jane Smith"
+        autocomplete="name"
+      />
+    </div>
+
+    <div class="field">
+      <label for="register-email" class="field-label">Email</label>
+      <input
+        id="register-email"
+        type="email"
+        pInputText
+        placeholder="you@example.com"
+        autocomplete="email"
+      />
+    </div>
+
+    <div class="field">
+      <label for="register-password" class="field-label">Password</label>
+      <p-password
+        inputId="register-password"
+        placeholder="Create a password"
+        [feedback]="false"
+        [toggleMask]="true"
+        autocomplete="new-password"
+        [fluid]="true"
+      />
+    </div>
+
+    <div class="field">
+      <label for="register-confirm" class="field-label">Confirm Password</label>
+      <p-password
+        inputId="register-confirm"
+        placeholder="Repeat your password"
+        [feedback]="false"
+        [toggleMask]="true"
+        autocomplete="new-password"
+        [fluid]="true"
+      />
+    </div>
+  </div>
+
+  <p-button label="Create account" [fluid]="true" />
+
+  <p class="auth-footer">
+    Already have an account?
+    <a [routerLink]="['/login']">Sign in</a>
+  </p>
+</div>
