@@ -1,0 +1,22 @@
+<div class="app-shell">
+  <nav class="sidebar">
+    <div class="sidebar-logo">E</div>
+
+    <div class="sidebar-nav">
+      @for (item of navItems; track item.path) {
+        <a class="sidebar-nav-item" [routerLink]="item.path" routerLinkActive="active">
+          <span class="nav-icon">{{ item.icon }}</span>
+          <span class="nav-label">{{ item.label }}</span>
+        </a>
+      }
+    </div>
+
+    <div class="sidebar-footer">
+      <div class="user-avatar">M</div>
+    </div>
+  </nav>
+
+  <main class="content-area">
+    <router-outlet />
+  </main>
+</div>
