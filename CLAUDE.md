@@ -66,7 +66,7 @@ Browser → Angular SPA
 
 ### Backend Package Structure (`com.yourapp.*`)
 
-Feature packages mirror the domain: `auth`, `user`, `account`, `transaction`, `category`, `budget`, `tag`, `recurring`, `report`. Each package owns its entity, repository, service, controller, and `dto/` subpackage. Cross-cutting concerns live in `common/` (exception handling, shared DTOs).
+Feature packages mirror the domain: `auth`, `user`, `account`, `transaction`, `category`, `budget`, `tag`, `recurring`. Each package owns its entity, repository, service, controller, and `dto/` subpackage. Cross-cutting concerns live in `common/` (exception handling, shared DTOs). Cross-cutting config (JWT, security, scheduler) lives in `config/`. Note: `report/` is planned per SPEC but not yet created.
 
 ### Security Model
 
@@ -82,12 +82,11 @@ Feature packages mirror the domain: `auth`, `user`, `account`, `transaction`, `c
 
 ### Frontend Architecture
 
-> **Note:** NgRx runtime packages (`@ngrx/store`, `@ngrx/effects`, `@ngrx/store-devtools`) are not yet installed. Run `npm install @ngrx/store @ngrx/effects @ngrx/store-devtools` inside `frontend/` before scaffolding any feature slices.
-
 - **NgRx slices:** `auth`, `accounts`, `transactions`, `categories`, `budgets`. Effects own all HTTP calls; components only dispatch actions and select from the store.
 - **Lazy-loaded feature modules** under `app/features/`. Core services and models live in `app/core/`.
+- **`ShellComponent`** at `app/core/layout/shell/` is the root route component — a collapsible icon sidebar that wraps all feature views. New routes go as `children` of the shell route in `app.routes.ts`.
 - **`JwtInterceptor`** attaches the Bearer token to every outgoing request. On `401` it silently refreshes the token pair and retries; on refresh failure it logs the user out.
-- **Theming:** PrimeNG base theme (`lara-light` or `aura`) overridden via SCSS variables defined in `styles/_variables.scss`.
+- **Theming:** PrimeNG Aura theme with teal design tokens. Overrides live in `frontend/src/styles/` — `_variables.scss` (tokens), `_primeng.scss` (component overrides), `_layout.scss`, `_typography.scss`, `_components.scss`.
 
 ## Key Conventions
 
