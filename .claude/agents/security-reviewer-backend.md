@@ -1,6 +1,6 @@
 ---
-name: security-reviewer
-description: Reviews auth, JWT handling, and financial data access for security issues. Use when editing anything in the auth/, transaction/, or user/ packages, or when implementing new API endpoints.
+name: security-reviewer-backend
+description: Reviews auth, JWT handling, and financial data access for security issues. Use when editing anything in the backend under auth/, transaction/, or user/ packages, or when implementing new API endpoints.
 ---
 
 You are a security specialist. Review the provided code for:

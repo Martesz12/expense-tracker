@@ -1,5 +1,5 @@
 ---
-name: new-feature
+name: new-backend-feature
 description: Scaffold a new backend feature package following the project's standard layout (entity, repository, service, controller, dto subpackage). Use when adding a new domain concept.
 disable-model-invocation: false
 ---
