@@ -8,12 +8,16 @@ export const authFeature = createFeature({
   reducer: createReducer(
     initialAuthState,
 
-    on(AuthActions.login, AuthActions.register, (state): AuthState => ({
-      ...state,
-      loading: true,
-      loginError: null,
-      registerError: null,
-    })),
+    on(
+      AuthActions.login,
+      AuthActions.register,
+      (state): AuthState => ({
+        ...state,
+        loading: true,
+        loginError: null,
+        registerError: null,
+      }),
+    ),
 
     on(
       AuthActions.loginSuccess,
@@ -30,30 +34,43 @@ export const authFeature = createFeature({
       }),
     ),
 
-    on(AuthActions.loginFailure, (state, { error }): AuthState => ({
-      ...state,
-      loading: false,
-      loginError: error,
-    })),
+    on(
+      AuthActions.loginFailure,
+      (state, { error }): AuthState => ({
+        ...state,
+        loading: false,
+        loginError: error,
+      }),
+    ),
 
-    on(AuthActions.registerFailure, (state, { error }): AuthState => ({
-      ...state,
-      loading: false,
-      registerError: error,
-    })),
+    on(
+      AuthActions.registerFailure,
+      (state, { error }): AuthState => ({
+        ...state,
+        loading: false,
+        registerError: error,
+      }),
+    ),
 
-    on(AuthActions.logoutSuccess, AuthActions.refreshTokenFailure, (state): AuthState => ({
-      ...state,
-      user: null,
-      accessToken: null,
-      loading: false,
-      initialized: true,
-    })),
+    on(
+      AuthActions.logoutSuccess,
+      AuthActions.refreshTokenFailure,
+      (state): AuthState => ({
+        ...state,
+        user: null,
+        accessToken: null,
+        loading: false,
+        initialized: true,
+      }),
+    ),
 
-    on(AuthActions.initSessionComplete, (state): AuthState => ({
-      ...state,
-      initialized: true,
-    })),
+    on(
+      AuthActions.initSessionComplete,
+      (state): AuthState => ({
+        ...state,
+        initialized: true,
+      }),
+    ),
   ),
 });
 
