@@ -32,6 +32,7 @@ import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import org.mockito.ArgumentMatchers;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -328,7 +329,7 @@ class TransactionServiceTest {
         Transaction tx = buildTransaction(UUID.randomUUID(), account, category);
         tx.setNote("lunch, with comma");
 
-        when(transactionRepository.findAll(any(org.springframework.data.jpa.domain.Specification.class)))
+        when(transactionRepository.findAll(ArgumentMatchers.<org.springframework.data.jpa.domain.Specification<Transaction>>any()))
                 .thenReturn(List.of(tx));
 
         StringWriter sw = new StringWriter();
