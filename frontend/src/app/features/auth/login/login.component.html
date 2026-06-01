@@ -5,32 +5,60 @@
     <p class="auth-subtitle">Welcome back to Expense Tracker</p>
   </div>
 
-  <div class="auth-fields">
-    <div class="field">
-      <label for="login-email" class="field-label">Email</label>
-      <input
-        id="login-email"
-        type="email"
-        pInputText
-        placeholder="you@example.com"
-        autocomplete="email"
-      />
+  @if (error$ | async; as error) {
+    <p-message severity="error" styleClass="auth-server-error">{{ error }}</p-message>
+  }
+
+  <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
+    <div class="auth-fields">
+      <div class="field">
+        <label for="login-email" class="field-label">Email</label>
+        <input
+          id="login-email"
+          type="email"
+          pInputText
+          formControlName="email"
+          placeholder="you@example.com"
+          autocomplete="email"
+          [fluid]="true"
+          [invalid]="form.controls.email.invalid && form.controls.email.touched"
+        />
+        @if (form.controls.email.touched && form.controls.email.hasError('required')) {
+          <small class="field-error">Email is required.</small>
+        } @else if (form.controls.email.touched && form.controls.email.hasError('email')) {
+          <small class="field-error">Enter a valid email address.</small>
+        }
+      </div>
+
+      <div class="field">
+        <label for="login-password" class="field-label">Password</label>
+        <p-password
+          inputId="login-password"
+          formControlName="password"
+          placeholder="Enter your password"
+          [feedback]="false"
+          [toggleMask]="true"
+          autocomplete="current-password"
+          [fluid]="true"
+          [invalid]="form.controls.password.invalid && form.controls.password.touched"
+        />
+        @if (form.controls.password.touched && form.controls.password.hasError('required')) {
+          <small class="field-error">Password is required.</small>
+        } @else if (
+          form.controls.password.touched && form.controls.password.hasError('minlength')
+        ) {
+          <small class="field-error">Password must be at least 8 characters.</small>
+        }
+      </div>
     </div>
 
-    <div class="field">
-      <label for="login-password" class="field-label">Password</label>
-      <p-password
-        inputId="login-password"
-        placeholder="Enter your password"
-        [feedback]="false"
-        [toggleMask]="true"
-        autocomplete="current-password"
-        [fluid]="true"
-      />
-    </div>
-  </div>
-
-  <p-button label="Sign in" [fluid]="true" />
+    <p-button
+      type="submit"
+      label="Sign in"
+      [fluid]="true"
+      [loading]="(loading$ | async) ?? false"
+    />
+  </form>
 
   <p class="auth-footer">
     Don't have an account?

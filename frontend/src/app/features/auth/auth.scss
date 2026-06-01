@@ -76,6 +76,16 @@
   letter-spacing: 0.7px;
 }
 
+.field-error {
+  font-size: 11px;
+  color: $color-expense;
+  display: block;
+}
+
+.auth-server-error {
+  margin-bottom: $space-lg;
+}
+
 .auth-footer {
   text-align: center;
   margin-top: $space-xl;
