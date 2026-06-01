@@ -90,6 +90,8 @@ Feature packages mirror the domain: `auth`, `user`, `account`, `transaction`, `c
 
 ## Key Conventions
 
+- **No barrel files:** Never create `index.ts` re-export files. Always import directly from individual files (e.g. `core/models/auth/user.model.ts`).
+
 - All REST responses on error use the shared JSON error shape defined in `SPEC.md §7` (`status`, `error`, `message`, `timestamp`). `GlobalExceptionHandler` handles this.
 - Category seeding (default categories like Food, Transport, etc.) happens server-side when a new user registers.
 - Recurring transaction generation runs as a daily Spring `@Scheduled` job in `RecurringScheduler`.
