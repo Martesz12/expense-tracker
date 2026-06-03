@@ -7,8 +7,8 @@ import { RegisterRequest } from '../../../core/models/auth/register-request.mode
 export const AuthActions = createActionGroup({
   source: 'Auth',
   events: {
-    Login: props<{ request: LoginRequest }>(),
-    'Login Success': props<{ response: AuthResponse }>(),
+    Login: props<{ request: LoginRequest; returnUrl?: string }>(),
+    'Login Success': props<{ response: AuthResponse; returnUrl?: string }>(),
     'Login Failure': props<{ error: string }>(),
 
     Register: props<{ request: RegisterRequest }>(),

@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AsyncPipe } from '@angular/common';
 import { Store } from '@ngrx/store';
@@ -22,6 +22,7 @@ import { selectLoading, selectLoginError } from '../store/auth.reducer';
 export class LoginComponent {
   private readonly fb = inject(NonNullableFormBuilder);
   private readonly store = inject(Store);
+  private readonly route = inject(ActivatedRoute);
 
   readonly form = this.fb.group({
     email: this.fb.control('', [Validators.required, Validators.email]),
@@ -36,6 +37,7 @@ export class LoginComponent {
       this.form.markAllAsTouched();
       return;
     }
-    this.store.dispatch(AuthActions.login({ request: this.form.getRawValue() }));
+    const returnUrl = this.route.snapshot.queryParamMap.get('returnUrl') ?? undefined;
+    this.store.dispatch(AuthActions.login({ request: this.form.getRawValue(), returnUrl }));
   }
 }

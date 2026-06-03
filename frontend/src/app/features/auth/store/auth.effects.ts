@@ -34,9 +34,9 @@ export class AuthEffects {
   login$ = createEffect(() => {
     return this.actions$.pipe(
       ofType(AuthActions.login),
-      exhaustMap(({ request }) =>
+      exhaustMap(({ request, returnUrl }) =>
         this.authService.login(request).pipe(
-          map((response) => AuthActions.loginSuccess({ response })),
+          map((response) => AuthActions.loginSuccess({ response, returnUrl })),
           catchError((err: unknown) =>
             of(AuthActions.loginFailure({ error: extractErrorMessage(err) })),
           ),
@@ -59,10 +59,24 @@ export class AuthEffects {
     );
   });
 
-  loginOrRegisterSuccess$ = createEffect(
+  loginSuccess$ = createEffect(
     () => {
       return this.actions$.pipe(
-        ofType(AuthActions.loginSuccess, AuthActions.registerSuccess),
+        ofType(AuthActions.loginSuccess),
+        tap(({ response, returnUrl }) => {
+          localStorage.setItem(REFRESH_TOKEN_KEY, response.refreshToken);
+          const destination = returnUrl && returnUrl.startsWith('/') ? returnUrl : '/dashboard';
+          this.router.navigate([destination]);
+        }),
+      );
+    },
+    { dispatch: false },
+  );
+
+  registerSuccess$ = createEffect(
+    () => {
+      return this.actions$.pipe(
+        ofType(AuthActions.registerSuccess),
         tap(({ response }) => {
           localStorage.setItem(REFRESH_TOKEN_KEY, response.refreshToken);
           this.router.navigate(['/dashboard']);
@@ -89,9 +103,15 @@ export class AuthEffects {
     () => {
       return this.actions$.pipe(
         ofType(AuthActions.logoutSuccess, AuthActions.refreshTokenFailure),
-        tap(() => {
+        tap(({ type }) => {
           localStorage.removeItem(REFRESH_TOKEN_KEY);
-          this.router.navigate(['/login']);
+          const isRefreshFailure = type === AuthActions.refreshTokenFailure.type;
+          const currentUrl = this.router.url;
+          const queryParams =
+            isRefreshFailure && !currentUrl.startsWith('/login')
+              ? { returnUrl: currentUrl }
+              : undefined;
+          this.router.navigate(['/login'], queryParams ? { queryParams } : undefined);
         }),
       );
     },
