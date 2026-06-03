@@ -91,6 +91,9 @@ Feature packages mirror the domain: `auth`, `user`, `account`, `transaction`, `c
 
 ## Key Conventions
 
+### Planning
+- All implementation plans MUST include a dedicated step to write tests for any new feature or bugfix.
+
 ### Frontend Testing
 - Use `provideMockStore` (`@ngrx/store/testing`) and `provideMockActions` (`@ngrx/effects/testing`) for NgRx unit tests.
 - After `store.overrideSelector(selector, value)`, call `store.refreshState()` to trigger emission; call `store.resetSelectors()` in `afterEach`.
