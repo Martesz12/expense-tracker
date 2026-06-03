@@ -33,7 +33,7 @@ mvn flyway:migrate                           # Run pending DB migrations manuall
 # From frontend/
 ng serve                                     # Start dev server (port 4200)
 ng test                                      # Run unit tests (Vitest)
-ng test --testPathPattern=foo.spec           # Run a single spec file
+ng test --include="src/**/*foo.spec.ts" --watch=false   # Run specific spec(s), no watch
 ng build                                     # Production build
 ng generate component features/foo/bar       # Scaffold a component
 ```
@@ -82,6 +82,7 @@ Feature packages mirror the domain: `auth`, `user`, `account`, `transaction`, `c
 
 ### Frontend Architecture
 
+- **Route guards** live in `app/core/guards/`. All guards are functional (`CanActivateFn`). Guards that check auth state must wait for `selectInitialized` before evaluating `selectIsAuthenticated` — session restoration from localStorage is async on startup.
 - **NgRx slices:** `auth`, `accounts`, `transactions`, `categories`, `budgets`. Effects own all HTTP calls; components only dispatch actions and select from the store.
 - **Lazy-loaded feature modules** under `app/features/`. Core services and models live in `app/core/`.
 - **`ShellComponent`** at `app/core/layout/shell/` is the root route component — a collapsible icon sidebar that wraps all feature views. New routes go as `children` of the shell route in `app.routes.ts`.
@@ -89,6 +90,12 @@ Feature packages mirror the domain: `auth`, `user`, `account`, `transaction`, `c
 - **Theming:** PrimeNG Aura theme with teal design tokens. Overrides live in `frontend/src/styles/` — `_variables.scss` (tokens), `_primeng.scss` (component overrides), `_layout.scss`, `_typography.scss`, `_components.scss`.
 
 ## Key Conventions
+
+### Frontend Testing
+- Use `provideMockStore` (`@ngrx/store/testing`) and `provideMockActions` (`@ngrx/effects/testing`) for NgRx unit tests.
+- After `store.overrideSelector(selector, value)`, call `store.refreshState()` to trigger emission; call `store.resetSelectors()` in `afterEach`.
+- Test functional guards with `TestBed.runInInjectionContext(() => guardFn(route, state))`, then `firstValueFrom()` to resolve the Observable result.
+- When providing a mock service via `useValue`, pass the object reference directly — never spread it — so `vi.fn().mockReturnValue()` calls affect the instance the class actually injects.
 
 - **No barrel files:** Never create `index.ts` re-export files. Always import directly from individual files (e.g. `core/models/auth/user.model.ts`).
 
