@@ -32,8 +32,8 @@ mvn flyway:migrate                           # Run pending DB migrations manuall
 ```bash
 # From frontend/
 ng serve                                     # Start dev server (port 4200)
-ng test                                      # Run unit tests (Vitest)
-ng test --include="src/**/*foo.spec.ts" --watch=false   # Run specific spec(s), no watch
+ng test --watch=false                        # Run all unit tests (Vitest)
+# NOTE: --include= fails with "No loader for .html/.scss" for components using templateUrl/styleUrl
 ng build                                     # Production build
 ng generate component features/foo/bar       # Scaffold a component
 ```

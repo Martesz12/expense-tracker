@@ -12,7 +12,21 @@
     </div>
 
     <div class="sidebar-footer">
-      <div class="user-avatar">M</div>
+      @let user = user$ | async;
+      <button class="avatar-trigger" (click)="op.toggle($event)" aria-label="User menu">
+        <div class="user-avatar">{{ avatarInitial(user) }}</div>
+      </button>
+      <p-popover #op styleClass="user-popover">
+        <div class="popover-user-info">
+          <div class="popover-name">{{ user?.name }}</div>
+          <div class="popover-email">{{ user?.email }}</div>
+        </div>
+        <hr class="popover-divider" />
+        <button class="logout-btn" (click)="logout()">
+          <span class="logout-icon">→</span>
+          Logout
+        </button>
+      </p-popover>
     </div>
   </nav>
 
