@@ -102,6 +102,10 @@ Feature packages mirror the domain: `auth`, `user`, `account`, `transaction`, `c
 - When providing a mock service via `useValue`, pass the object reference directly — never spread it — so `vi.fn().mockReturnValue()` calls affect the instance the class actually injects.
 - For synchronous action-to-action NgRx effects use `map(() => SomeAction())`, not `switchMap(() => of(SomeAction()))` — the latter is for async/Observable-returning transforms.
 
+### Styling / SCSS
+- All colors, spacing, radii, shadows, and other design values in `.scss` files **must** reference tokens from `frontend/src/styles/_variables.scss` (e.g. `$color-primary`, `$space-lg`). Never hardcode raw hex/px values that are already defined there.
+- For design guidance (component styles, typography scale, layout rules, semantic color usage), refer to `docs/superpowers/specs/2026-05-29-frontend-design.md`.
+
 - **No barrel files:** Never create `index.ts` re-export files. Always import directly from individual files (e.g. `core/models/auth/user.model.ts`).
 
 - All REST responses on error use the shared JSON error shape defined in `SPEC.md §7` (`status`, `error`, `message`, `timestamp`). `GlobalExceptionHandler` handles this.
