@@ -21,8 +21,5 @@ export const AuthActions = createActionGroup({
     'Refresh Token': emptyProps(),
     'Refresh Token Success': props<{ response: AuthResponse }>(),
     'Refresh Token Failure': emptyProps(),
-
-    'Init Session': emptyProps(),
-    'Init Session Complete': emptyProps(),
   },
 });

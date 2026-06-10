@@ -1,6 +1,5 @@
 package com.yourapp.auth;
 
-import com.yourapp.auth.dto.AuthResponse;
 import com.yourapp.category.CategoryRepository;
 import com.yourapp.config.JwtConfig;
 import com.yourapp.user.User;
@@ -57,9 +56,9 @@ class AuthServiceTest {
         when(jwtConfig.getRefreshExpiryDays()).thenReturn(30);
         when(jwtUtil.generateAccessToken(any())).thenReturn("access-token");
 
-        AuthResponse response = authService.register("Alice", "alice@example.com", "password123");
+        TokenPair pair = authService.register("Alice", "alice@example.com", "password123");
 
-        assertThat(response.accessToken()).isEqualTo("access-token");
+        assertThat(pair.response().accessToken()).isEqualTo("access-token");
         verify(categoryRepository, times(8)).save(any());
     }
 
@@ -81,9 +80,9 @@ class AuthServiceTest {
         when(jwtConfig.getRefreshExpiryDays()).thenReturn(30);
         when(jwtUtil.generateAccessToken(user.getId())).thenReturn("access-token");
 
-        AuthResponse response = authService.login("alice@example.com", "password123");
+        TokenPair pair = authService.login("alice@example.com", "password123");
 
-        assertThat(response.accessToken()).isEqualTo("access-token");
+        assertThat(pair.response().accessToken()).isEqualTo("access-token");
     }
 
     @Test
@@ -123,9 +122,9 @@ class AuthServiceTest {
         when(jwtConfig.getRefreshExpiryDays()).thenReturn(30);
         when(jwtUtil.generateAccessToken(user.getId())).thenReturn("new-access");
 
-        AuthResponse response = authService.refresh("some-raw-token");
+        TokenPair pair = authService.refresh("some-raw-token");
 
-        assertThat(response.accessToken()).isEqualTo("new-access");
+        assertThat(pair.response().accessToken()).isEqualTo("new-access");
         assertThat(stored.isRevoked()).isTrue();
         verify(refreshTokenRepository, atLeast(2)).save(any());
     }

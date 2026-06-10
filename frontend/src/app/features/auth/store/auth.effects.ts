@@ -2,13 +2,11 @@ import { Injectable, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Actions, createEffect, ofType, ROOT_EFFECTS_INIT } from '@ngrx/effects';
-import { catchError, exhaustMap, map, of, switchMap, tap } from 'rxjs';
+import { catchError, exhaustMap, map, of, tap } from 'rxjs';
 
 import { AuthActions } from './auth.actions';
 import { AuthService } from '../../../core/services/auth.service';
 import { ApiError } from '../../../core/models/auth/api-error.model';
-
-const REFRESH_TOKEN_KEY = 'refreshToken';
 
 function extractErrorMessage(err: unknown): string {
   const body = (err as HttpErrorResponse)?.error as ApiError | null;
@@ -24,10 +22,7 @@ export class AuthEffects {
   initSession$ = createEffect(() => {
     return this.actions$.pipe(
       ofType(ROOT_EFFECTS_INIT),
-      switchMap(() => {
-        const token = localStorage.getItem(REFRESH_TOKEN_KEY);
-        return token ? of(AuthActions.refreshToken()) : of(AuthActions.initSessionComplete());
-      }),
+      map(() => AuthActions.refreshToken()),
     );
   });
 
@@ -63,8 +58,7 @@ export class AuthEffects {
     () => {
       return this.actions$.pipe(
         ofType(AuthActions.loginSuccess),
-        tap(({ response, returnUrl }) => {
-          localStorage.setItem(REFRESH_TOKEN_KEY, response.refreshToken);
+        tap(({ returnUrl }) => {
           const destination = returnUrl && returnUrl.startsWith('/') ? returnUrl : '/dashboard';
           this.router.navigate([destination]);
         }),
@@ -77,8 +71,7 @@ export class AuthEffects {
     () => {
       return this.actions$.pipe(
         ofType(AuthActions.registerSuccess),
-        tap(({ response }) => {
-          localStorage.setItem(REFRESH_TOKEN_KEY, response.refreshToken);
+        tap(() => {
           this.router.navigate(['/dashboard']);
         }),
       );
@@ -89,13 +82,12 @@ export class AuthEffects {
   logout$ = createEffect(() => {
     return this.actions$.pipe(
       ofType(AuthActions.logout),
-      exhaustMap(() => {
-        const token = localStorage.getItem(REFRESH_TOKEN_KEY) ?? '';
-        return this.authService.logout(token).pipe(
+      exhaustMap(() =>
+        this.authService.logout().pipe(
           map(() => AuthActions.logoutSuccess()),
           catchError(() => of(AuthActions.logoutSuccess())),
-        );
-      }),
+        ),
+      ),
     );
   });
 
@@ -104,7 +96,6 @@ export class AuthEffects {
       return this.actions$.pipe(
         ofType(AuthActions.logoutSuccess, AuthActions.refreshTokenFailure),
         tap(({ type }) => {
-          localStorage.removeItem(REFRESH_TOKEN_KEY);
           const isRefreshFailure = type === AuthActions.refreshTokenFailure.type;
           const currentUrl = this.router.url;
           const queryParams =
@@ -121,17 +112,12 @@ export class AuthEffects {
   refreshToken$ = createEffect(() => {
     return this.actions$.pipe(
       ofType(AuthActions.refreshToken),
-      exhaustMap(() => {
-        const token = localStorage.getItem(REFRESH_TOKEN_KEY);
-        if (!token) {
-          return of(AuthActions.refreshTokenFailure());
-        }
-        return this.authService.refresh(token).pipe(
-          tap(({ refreshToken }) => localStorage.setItem(REFRESH_TOKEN_KEY, refreshToken)),
+      exhaustMap(() =>
+        this.authService.refresh().pipe(
           map((response) => AuthActions.refreshTokenSuccess({ response })),
           catchError(() => of(AuthActions.refreshTokenFailure())),
-        );
-      }),
+        ),
+      ),
     );
   });
 }

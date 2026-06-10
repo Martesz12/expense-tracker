@@ -63,14 +63,6 @@ export const authFeature = createFeature({
         initialized: true,
       }),
     ),
-
-    on(
-      AuthActions.initSessionComplete,
-      (state): AuthState => ({
-        ...state,
-        initialized: true,
-      }),
-    ),
   ),
 });
 

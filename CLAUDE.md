@@ -51,6 +51,7 @@ Backend env vars needed for local dev (see `SPEC.md §10` for full list):
 |----------|-------------|
 | `SPRING_DATASOURCE_URL` | `jdbc:postgresql://localhost:5432/expensetracker` |
 | `JWT_SECRET` | any string ≥ 32 characters |
+| `REFRESH_COOKIE_SECURE` | `false` locally, `true` in production |
 
 ## Architecture
 
@@ -72,7 +73,7 @@ Feature packages mirror the domain: `auth`, `user`, `account`, `transaction`, `c
 
 - `JwtAuthFilter` (extends `OncePerRequestFilter`) validates the `Authorization: Bearer` header on every request except `POST /api/auth/**`.
 - The authenticated user's UUID is extracted from the JWT and passed as the first argument (`UUID userId`) to every service method — this is how cross-user data leakage is prevented. **Never query without scoping to `userId`.**
-- Access tokens: 15 min / HS256. Refresh tokens: 30 days, stored as SHA-256 hashes in `refresh_tokens`, rotated on every use.
+- Access tokens: 15 min / HS256, stored only in NgRx store (memory). Refresh tokens: 30 days, stored as SHA-256 hashes in `refresh_tokens`, rotated on every use, delivered as an `HttpOnly; SameSite=Strict` cookie scoped to `Path=/api/auth`. The cookie is invisible to JS — `initSession$` always attempts a refresh on startup and treats a 401 response as "not logged in".
 
 ### Database
 
@@ -82,7 +83,7 @@ Feature packages mirror the domain: `auth`, `user`, `account`, `transaction`, `c
 
 ### Frontend Architecture
 
-- **Route guards** live in `app/core/guards/`. All guards are functional (`CanActivateFn`). Guards that check auth state must wait for `selectInitialized` before evaluating `selectIsAuthenticated` — session restoration from localStorage is async on startup.
+- **Route guards** live in `app/core/guards/`. All guards are functional (`CanActivateFn`). Guards that check auth state must wait for `selectInitialized` before evaluating `selectIsAuthenticated` — session restoration is async on startup (`initSession$` always fires `refreshToken()`, resolved by the HttpOnly cookie).
 - **NgRx slices:** `auth`, `accounts`, `transactions`, `categories`, `budgets`. Effects own all HTTP calls; components only dispatch actions and select from the store.
 - **Lazy-loaded feature modules** under `app/features/`. Core services and models live in `app/core/`.
 - **`ShellComponent`** at `app/core/layout/shell/` is the root route component — a collapsible icon sidebar that wraps all feature views. New routes go as `children` of the shell route in `app.routes.ts`.
@@ -99,6 +100,7 @@ Feature packages mirror the domain: `auth`, `user`, `account`, `transaction`, `c
 - After `store.overrideSelector(selector, value)`, call `store.refreshState()` to trigger emission; call `store.resetSelectors()` in `afterEach`.
 - Test functional guards with `TestBed.runInInjectionContext(() => guardFn(route, state))`, then `firstValueFrom()` to resolve the Observable result.
 - When providing a mock service via `useValue`, pass the object reference directly — never spread it — so `vi.fn().mockReturnValue()` calls affect the instance the class actually injects.
+- For synchronous action-to-action NgRx effects use `map(() => SomeAction())`, not `switchMap(() => of(SomeAction()))` — the latter is for async/Observable-returning transforms.
 
 - **No barrel files:** Never create `index.ts` re-export files. Always import directly from individual files (e.g. `core/models/auth/user.model.ts`).
 

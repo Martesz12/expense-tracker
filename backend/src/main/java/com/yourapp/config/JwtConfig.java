@@ -11,4 +11,5 @@ public class JwtConfig {
     private String secret;
     private int accessExpiryMinutes = 15;
     private int refreshExpiryDays = 30;
+    private boolean refreshCookieSecure = false;
 }

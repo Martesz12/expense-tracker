@@ -1,18 +1,18 @@
 import { TestBed } from '@angular/core/testing';
 import { Router } from '@angular/router';
 import { provideMockActions } from '@ngrx/effects/testing';
-import { Observable, firstValueFrom, of } from 'rxjs';
+import { Observable, firstValueFrom, of, throwError } from 'rxjs';
 
 import { AuthEffects } from './auth.effects';
 import { AuthActions } from './auth.actions';
 import { AuthService } from '../../../core/services/auth.service';
 import { AuthResponse } from '../../../core/models/auth/auth-response.model';
 import { User } from '../../../core/models/auth/user.model';
+import { ROOT_EFFECTS_INIT } from '@ngrx/effects';
 
 const mockUser: User = { id: '1', name: 'Test', email: 'test@example.com', homeCurrency: 'USD' };
 const mockResponse: AuthResponse = {
   accessToken: 'access',
-  refreshToken: 'refresh',
   user: mockUser,
 };
 
@@ -30,7 +30,6 @@ describe('AuthEffects', () => {
   beforeEach(() => {
     mockRouter = { navigate: vi.fn().mockResolvedValue(true), url: '/dashboard' };
     mockAuthService = { login: vi.fn(), register: vi.fn(), refresh: vi.fn(), logout: vi.fn() };
-    localStorage.clear();
 
     TestBed.configureTestingModule({
       providers: [
@@ -42,6 +41,16 @@ describe('AuthEffects', () => {
     });
 
     effects = TestBed.inject(AuthEffects);
+  });
+
+  describe('initSession$', () => {
+    it('always dispatches refreshToken regardless of cookie state', async () => {
+      actions$ = of({ type: ROOT_EFFECTS_INIT });
+
+      const result = await firstValueFrom(effects.initSession$);
+
+      expect(result).toEqual(AuthActions.refreshToken());
+    });
   });
 
   describe('login$', () => {
@@ -91,14 +100,6 @@ describe('AuthEffects', () => {
 
       expect(mockRouter.navigate).toHaveBeenCalledWith(['/dashboard']);
     });
-
-    it('saves the refresh token to localStorage', async () => {
-      actions$ = of(AuthActions.loginSuccess({ response: mockResponse }));
-
-      await firstValueFrom(effects.loginSuccess$);
-
-      expect(localStorage.getItem('refreshToken')).toBe('refresh');
-    });
   });
 
   describe('registerSuccess$', () => {
@@ -109,13 +110,26 @@ describe('AuthEffects', () => {
 
       expect(mockRouter.navigate).toHaveBeenCalledWith(['/dashboard']);
     });
+  });
 
-    it('saves the refresh token to localStorage', async () => {
-      actions$ = of(AuthActions.registerSuccess({ response: mockResponse }));
+  describe('logout$', () => {
+    it('calls authService.logout() with no arguments and dispatches logoutSuccess', async () => {
+      mockAuthService.logout.mockReturnValue(of(void 0));
+      actions$ = of(AuthActions.logout());
 
-      await firstValueFrom(effects.registerSuccess$);
+      const result = await firstValueFrom(effects.logout$);
 
-      expect(localStorage.getItem('refreshToken')).toBe('refresh');
+      expect(mockAuthService.logout).toHaveBeenCalledWith();
+      expect(result).toEqual(AuthActions.logoutSuccess());
+    });
+
+    it('dispatches logoutSuccess even when logout API call fails', async () => {
+      mockAuthService.logout.mockReturnValue(throwError(() => new Error('network error')));
+      actions$ = of(AuthActions.logout());
+
+      const result = await firstValueFrom(effects.logout$);
+
+      expect(result).toEqual(AuthActions.logoutSuccess());
     });
   });
 
@@ -156,14 +170,26 @@ describe('AuthEffects', () => {
 
       expect(mockRouter.navigate).toHaveBeenCalledWith(['/login'], undefined);
     });
+  });
 
-    it('removes the refresh token from localStorage', async () => {
-      localStorage.setItem('refreshToken', 'old-token');
-      actions$ = of(AuthActions.logoutSuccess());
+  describe('refreshToken$', () => {
+    it('calls authService.refresh() with no arguments and dispatches refreshTokenSuccess', async () => {
+      mockAuthService.refresh.mockReturnValue(of(mockResponse));
+      actions$ = of(AuthActions.refreshToken());
 
-      await firstValueFrom(effects.logoutOrRefreshFailure$);
+      const result = await firstValueFrom(effects.refreshToken$);
 
-      expect(localStorage.getItem('refreshToken')).toBeNull();
+      expect(mockAuthService.refresh).toHaveBeenCalledWith();
+      expect(result).toEqual(AuthActions.refreshTokenSuccess({ response: mockResponse }));
+    });
+
+    it('dispatches refreshTokenFailure when refresh API call fails', async () => {
+      mockAuthService.refresh.mockReturnValue(throwError(() => new Error('401')));
+      actions$ = of(AuthActions.refreshToken());
+
+      const result = await firstValueFrom(effects.refreshToken$);
+
+      expect(result).toEqual(AuthActions.refreshTokenFailure());
     });
   });
 });

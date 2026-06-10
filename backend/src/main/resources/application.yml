@@ -37,6 +37,7 @@ jwt:
   secret: ${JWT_SECRET:local-dev-secret-replace-in-production-min32chars}
   access-expiry-minutes: ${JWT_ACCESS_EXPIRY_MINUTES:15}
   refresh-expiry-days: ${JWT_REFRESH_EXPIRY_DAYS:30}
+  refresh-cookie-secure: ${REFRESH_COOKIE_SECURE:false}
 
 cors:
   allowed-origins: ${ALLOWED_ORIGINS:http://localhost:4200}

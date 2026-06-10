@@ -34,7 +34,7 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
 
     @Transactional
-    public AuthResponse register(String name, String email, String password) {
+    public TokenPair register(String name, String email, String password) {
         if (userRepository.existsByEmail(email)) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Email already in use");
         }
@@ -52,7 +52,7 @@ public class AuthService {
     }
 
     @Transactional
-    public AuthResponse login(String email, String password) {
+    public TokenPair login(String email, String password) {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid credentials"));
 
@@ -64,7 +64,7 @@ public class AuthService {
     }
 
     @Transactional
-    public AuthResponse refresh(String rawRefreshToken) {
+    public TokenPair refresh(String rawRefreshToken) {
         String hash = sha256(rawRefreshToken);
         RefreshToken stored = refreshTokenRepository.findByTokenHash(hash)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid refresh token"));
@@ -91,7 +91,7 @@ public class AuthService {
         });
     }
 
-    private AuthResponse issueTokens(User user) {
+    private TokenPair issueTokens(User user) {
         String accessToken = jwtUtil.generateAccessToken(user.getId());
         String rawRefreshToken = UUID.randomUUID().toString();
         String tokenHash = sha256(rawRefreshToken);
@@ -103,7 +103,7 @@ public class AuthService {
                 .build();
         refreshTokenRepository.save(refreshToken);
 
-        return new AuthResponse(accessToken, rawRefreshToken, toDto(user));
+        return new TokenPair(new AuthResponse(accessToken, toDto(user)), rawRefreshToken);
     }
 
     private void seedDefaultCategories(User user) {

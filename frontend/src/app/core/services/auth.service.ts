@@ -13,18 +13,18 @@ export class AuthService {
   private readonly base = `${environment.apiUrl}/auth`;
 
   login(body: LoginRequest): Observable<AuthResponse> {
-    return this.http.post<AuthResponse>(`${this.base}/login`, body);
+    return this.http.post<AuthResponse>(`${this.base}/login`, body, { withCredentials: true });
   }
 
   register(body: RegisterRequest): Observable<AuthResponse> {
-    return this.http.post<AuthResponse>(`${this.base}/register`, body);
+    return this.http.post<AuthResponse>(`${this.base}/register`, body, { withCredentials: true });
   }
 
-  refresh(refreshToken: string): Observable<AuthResponse> {
-    return this.http.post<AuthResponse>(`${this.base}/refresh`, { refreshToken });
+  refresh(): Observable<AuthResponse> {
+    return this.http.post<AuthResponse>(`${this.base}/refresh`, {}, { withCredentials: true });
   }
 
-  logout(refreshToken: string): Observable<void> {
-    return this.http.post<void>(`${this.base}/logout`, { refreshToken });
+  logout(): Observable<void> {
+    return this.http.post<void>(`${this.base}/logout`, {}, { withCredentials: true });
   }
 }
