@@ -1,0 +1,23 @@
+{
+  "skill_name": "change-review",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "hey can you review my changes? i just added the new transaction filtering logic and i'm not 100% sure it's clean",
+      "expected_output": "A structured report with ## Change Review header, severity counts, and findings categorized as Critical/Warnings/Suggestions. Each finding must include a file:line reference and a concrete Suggestion.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "do a self-review on what i've written so far before i commit",
+      "expected_output": "Either a structured findings report (if issues exist) or a clear 'No issues found — changes look clean.' message. Must not hallucinate issues on a clean diff.",
+      "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "jolly raccoon",
+      "expected_output": "The skill triggers correctly from the nickname trigger phrase. Produces the same structured change-review report as any other invocation.",
+      "files": []
+    }
+  ]
+}
