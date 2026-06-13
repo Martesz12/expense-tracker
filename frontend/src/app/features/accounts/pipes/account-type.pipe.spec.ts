@@ -8,4 +8,11 @@ describe('AccountTypePipe', () => {
     expect(pipe.transform('CREDIT_CARD')).toBe('Credit Card'));
   it('transforms unknown value to the original string', () =>
     expect(pipe.transform('FOO')).toBe('FOO'));
+
+  it.each([
+    ['BANK', 'Bank'],
+    ['SAVINGS', 'Savings'],
+    ['INVESTMENT', 'Investment'],
+    ['OTHER', 'Other'],
+  ])('transforms %s to %s', (input, expected) => expect(pipe.transform(input)).toBe(expected));
 });

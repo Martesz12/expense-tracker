@@ -1,4 +1,5 @@
 import { Pipe, PipeTransform } from '@angular/core';
+import { AccountType } from '../../../core/models/account/account.model';
 
 @Pipe({ name: 'accountType', standalone: true })
 export class AccountTypePipe implements PipeTransform {
@@ -11,7 +12,7 @@ export class AccountTypePipe implements PipeTransform {
     OTHER: 'Other',
   };
 
-  transform(type: string): string {
+  transform(type: AccountType | string): string {
     return this.labels[type] ?? type;
   }
 }
