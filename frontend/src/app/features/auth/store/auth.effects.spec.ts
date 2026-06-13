@@ -1,4 +1,5 @@
 import { TestBed } from '@angular/core/testing';
+import { Location } from '@angular/common';
 import { Router } from '@angular/router';
 import { provideMockActions } from '@ngrx/effects/testing';
 import { Observable, firstValueFrom, of, throwError } from 'rxjs';
@@ -19,7 +20,8 @@ const mockResponse: AuthResponse = {
 describe('AuthEffects', () => {
   let actions$: Observable<unknown>;
   let effects: AuthEffects;
-  let mockRouter: { navigate: ReturnType<typeof vi.fn>; url: string };
+  let mockRouter: { navigate: ReturnType<typeof vi.fn> };
+  let mockLocation: { path: ReturnType<typeof vi.fn> };
   let mockAuthService: {
     login: ReturnType<typeof vi.fn>;
     register: ReturnType<typeof vi.fn>;
@@ -28,7 +30,8 @@ describe('AuthEffects', () => {
   };
 
   beforeEach(() => {
-    mockRouter = { navigate: vi.fn().mockResolvedValue(true), url: '/dashboard' };
+    mockRouter = { navigate: vi.fn().mockResolvedValue(true) };
+    mockLocation = { path: vi.fn().mockReturnValue('/dashboard') };
     mockAuthService = { login: vi.fn(), register: vi.fn(), refresh: vi.fn(), logout: vi.fn() };
 
     TestBed.configureTestingModule({
@@ -36,6 +39,7 @@ describe('AuthEffects', () => {
         AuthEffects,
         provideMockActions(() => actions$),
         { provide: Router, useValue: mockRouter },
+        { provide: Location, useValue: mockLocation },
         { provide: AuthService, useValue: mockAuthService },
       ],
     });
@@ -143,7 +147,7 @@ describe('AuthEffects', () => {
     });
 
     it('navigates to /login with returnUrl on refresh token failure', async () => {
-      mockRouter.url = '/dashboard';
+      mockLocation.path.mockReturnValue('/dashboard');
       actions$ = of(AuthActions.refreshTokenFailure());
 
       await firstValueFrom(effects.logoutOrRefreshFailure$);
@@ -154,7 +158,7 @@ describe('AuthEffects', () => {
     });
 
     it('does not add returnUrl when already on /login on refresh failure', async () => {
-      mockRouter.url = '/login';
+      mockLocation.path.mockReturnValue('/login');
       actions$ = of(AuthActions.refreshTokenFailure());
 
       await firstValueFrom(effects.logoutOrRefreshFailure$);
@@ -163,7 +167,7 @@ describe('AuthEffects', () => {
     });
 
     it('does not add returnUrl when on /login with query params on refresh failure', async () => {
-      mockRouter.url = '/login?returnUrl=%2Fdashboard';
+      mockLocation.path.mockReturnValue('/login?returnUrl=%2Fdashboard');
       actions$ = of(AuthActions.refreshTokenFailure());
 
       await firstValueFrom(effects.logoutOrRefreshFailure$);

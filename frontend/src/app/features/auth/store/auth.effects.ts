@@ -1,4 +1,5 @@
 import { Injectable, inject } from '@angular/core';
+import { Location } from '@angular/common';
 import { Router } from '@angular/router';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Actions, createEffect, ofType, ROOT_EFFECTS_INIT } from '@ngrx/effects';
@@ -18,6 +19,7 @@ export class AuthEffects {
   private readonly actions$ = inject(Actions);
   private readonly authService = inject(AuthService);
   private readonly router = inject(Router);
+  private readonly location = inject(Location);
 
   initSession$ = createEffect(() => {
     return this.actions$.pipe(
@@ -97,7 +99,7 @@ export class AuthEffects {
         ofType(AuthActions.logoutSuccess, AuthActions.refreshTokenFailure),
         tap(({ type }) => {
           const isRefreshFailure = type === AuthActions.refreshTokenFailure.type;
-          const currentUrl = this.router.url;
+          const currentUrl = this.location.path();
           const queryParams =
             isRefreshFailure && !currentUrl.startsWith('/login')
               ? { returnUrl: currentUrl }
